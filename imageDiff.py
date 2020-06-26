@@ -48,8 +48,8 @@ def ImageDiff(image1_file_name, _file_name, path='./'):
     # cv2.waitKey(0)
     # cv2.destroyAllWindows()
 
-    res_path1 = path + "result2.png"
-    res_path2 = path + "result1.png"
+    res_path1 = path + "result1.png"
+    res_path2 = path + "result2.png"
 
     cv2.imwrite(res_path1, new_image_A)
     cv2.imwrite(res_path2, new_image_B)
