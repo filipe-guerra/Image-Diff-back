@@ -19,40 +19,51 @@ class File:
 
 class ImageFiles:
 
-    def generateResultImages(self):
+    def generateResultImages(self, assert_image_name='model'):
+        to_evaluate = self.getLastsUniqueValues()
+        print(to_evaluate.values())
+        for path, most_recent_file in to_evaluate.items():
+            try:
+                image1 = most_recent_file + '.png'
+                image2 = assert_image_name + '.png'
+
+                ImageDiff(path)
+                ImageDiff(path + '/', most_recent_file + '.png')
+            except:
+                print('******************* Problema na comparacao de ' + path)
+
+    def getLastsUniqueValues(self):
 
         files_obj, unique_values = self.recursivelySearch('*.png')
+        lasts_unique_values = {}
 
         # for obj in files_obj:
-        for value in unique_values:
+        for path in unique_values:
             dates = []
             for obj in files_obj:
-                if unique_values[value] == obj.name:
+                if unique_values[path] == obj.name:
                     dates.append(int(obj.date.replace('_', '').replace('-', '')))
             most_recent = self.intToStringDate(max(dates))
-            # common_path = value + "/" + unique_values[value] + " "
+            # common_path = path + "/" + unique_values[path] + " "
             # most_recent_path = common_path + most_recent + ".png" 
-            most_recent_file = unique_values[value] + " " + most_recent
+            most_recent_file = unique_values[path] + " " + most_recent
 
-            try:
-                ImageDiff(value + '/', most_recent_file + '.png')
-            except:
-                print('******************* Problema na comparacao de ' + value)
+            lasts_unique_values.update({path: most_recent_file})
 
-        return unique_values
+        return lasts_unique_values
 
     def recursivelySearch(self, strToSearch):
         files_obj = []
         unique_values = {}
 
-        target_folder = Path('static/screenshots/')
+        target_folder = Path('static/')
 
         for file in target_folder.rglob(strToSearch):
             file = str(file)
 
             file_splited = file.rsplit('/', 1)
             path = file_splited[0]
-            if not 'result' in file_splited[1] and not 'base' in file_splited[1]:
+            try:
                 date = file_splited[1].rsplit(' ', 1)[1].rstrip('.png')
 
                 name = path.rsplit('/', 1)[1]
@@ -60,6 +71,8 @@ class ImageFiles:
                 newfile = File(path, name, date)
                 files_obj.append(newfile)
                 unique_values.update({path: name})
+            except:
+                pass
 
         return files_obj, unique_values
 
@@ -83,5 +96,6 @@ class ImageFiles:
 
 
 if __name__ == "__main__":
-    resultPaths = ImageDiff()
+    # resultPaths = ImageFiles()
+    resultPaths = ImageFiles()
     resultPaths.generateResultImages()
