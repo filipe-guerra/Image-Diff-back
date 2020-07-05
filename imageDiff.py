@@ -1,4 +1,5 @@
 from skimage.metrics import structural_similarity
+from collections import namedtuple
 import imutils
 import cv2
 from pathlib import Path
@@ -53,8 +54,15 @@ def ImageDiff(image1_file_name, _file_name, path='./'):
 
     cv2.imwrite(res_path1, new_image_A)
     cv2.imwrite(res_path2, new_image_B)
-
-    return res_path1, res_path2, "{}".format(score)
+    
+    MyStruct = namedtuple('MyStruct', 'result1_path result2_path score')
+    s = MyStruct(
+        result1_path= res_path1,
+        result2_path= res_path2,
+        score= "{}".format(score)
+    )
+    
+    return s
 
 if __name__ == "__main__":
     
