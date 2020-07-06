@@ -21,40 +21,50 @@ class ImageFiles:
 
     def generateResultImages(self, assert_image_name='model'):
         to_evaluate = self.getLastsUniqueValues()
-        print(to_evaluate.values())
+        print(to_evaluate.items())
         for path, most_recent_file in to_evaluate.items():
             try:
-                image1 = most_recent_file + '.png'
-                image2 = assert_image_name + '.png'
+                image1 = assert_image_name + '.png'
+                image2 = most_recent_file + '.png'
 
-                ImageDiff(path)
-                ImageDiff(path + '/', most_recent_file + '.png')
+                ImageDiff(image1, image2, path)
+                # ImageDiff(path + '/', most_recent_file + '.png')
             except:
                 print('******************* Problema na comparacao de ' + path)
 
     def getLastsUniqueValues(self):
 
-        files_obj, unique_values = self.recursivelySearch('*.png')
-        lasts_unique_values = {}
+        files_obj, all_paths = self.recursivelySearch('*.png')
+        last_image_printed = {}
 
+        for path in all_paths:
+            objs = [file for file in filter(lambda x:x.path == path, files_obj)]
+            f = lambda x: int(x.date.replace('_', '').replace('-', ''))
+            dates = [f(obj) for obj in objs]
+            last_date = self.intToStringDate(max(dates))
+            most_recent_path = objs[0].name + ' ' + last_date 
+            last_image_printed.update({path: most_recent_path})
+
+        return last_image_printed
         # for obj in files_obj:
-        for path in unique_values:
-            dates = []
-            for obj in files_obj:
-                if unique_values[path] == obj.name:
-                    dates.append(int(obj.date.replace('_', '').replace('-', '')))
-            most_recent = self.intToStringDate(max(dates))
-            # common_path = path + "/" + unique_values[path] + " "
-            # most_recent_path = common_path + most_recent + ".png" 
-            most_recent_file = unique_values[path] + " " + most_recent
+        # for path in all_paths:
+        #     dates = []
+        #     # for paths in all_paths
+        #     for obj in files_obj:
+        #         if all_paths[path] == obj.name:
+        #             dates.append(int(obj.date.replace('_', '').replace('-', '')))
+        #     most_recent = self.intToStringDate(max(dates))
+        #     # common_path = path + "/" + unique_values[path] + " "
+        #     # most_recent_path = common_path + most_recent + ".png" 
+        #     most_recent_file = all_paths[path] + " " + most_recent
 
-            lasts_unique_values.update({path: most_recent_file})
+        #     lasts_unique_values.update({path: most_recent_file})
 
-        return lasts_unique_values
+        # return lasts_unique_values
 
     def recursivelySearch(self, strToSearch):
         files_obj = []
-        unique_values = {}
+        all_paths = set()
 
         target_folder = Path('static/')
 
@@ -66,15 +76,15 @@ class ImageFiles:
             try:
                 date = file_splited[1].rsplit(' ', 1)[1].rstrip('.png')
 
-                name = path.rsplit('/', 1)[1]
+                name = file_splited[1].split(' ', 1)[0]
 
-                newfile = File(path, name, date)
+                newfile = File(path+'/', name, date)
                 files_obj.append(newfile)
-                unique_values.update({path: name})
+                all_paths.add(path+'/')
             except:
                 pass
 
-        return files_obj, unique_values
+        return files_obj, all_paths
 
     def intToStringDate(self, value):
         k = str(value)
