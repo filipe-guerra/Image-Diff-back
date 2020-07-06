@@ -28,9 +28,8 @@ class ImageFiles:
                 image2 = most_recent_file + '.png'
 
                 ImageDiff(image1, image2, path)
-                # ImageDiff(path + '/', most_recent_file + '.png')
             except:
-                print('******************* Problema na comparacao de ' + path)
+                print('******************* Compare image error: ' + path)
 
     def getLastsUniqueValues(self):
 
@@ -46,21 +45,6 @@ class ImageFiles:
             last_image_printed.update({path: most_recent_path})
 
         return last_image_printed
-        # for obj in files_obj:
-        # for path in all_paths:
-        #     dates = []
-        #     # for paths in all_paths
-        #     for obj in files_obj:
-        #         if all_paths[path] == obj.name:
-        #             dates.append(int(obj.date.replace('_', '').replace('-', '')))
-        #     most_recent = self.intToStringDate(max(dates))
-        #     # common_path = path + "/" + unique_values[path] + " "
-        #     # most_recent_path = common_path + most_recent + ".png" 
-        #     most_recent_file = all_paths[path] + " " + most_recent
-
-        #     lasts_unique_values.update({path: most_recent_file})
-
-        # return lasts_unique_values
 
     def recursivelySearch(self, strToSearch):
         files_obj = []
@@ -106,6 +90,5 @@ class ImageFiles:
 
 
 if __name__ == "__main__":
-    # resultPaths = ImageFiles()
     resultPaths = ImageFiles()
     resultPaths.generateResultImages()
